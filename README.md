@@ -4,21 +4,24 @@
 
 # One Line of Earned Pride
 
-Entry for the make.fun competition `u-mang-one-line-of-earned-pride-a0138557`:
-one line, at most 200 characters, of quiet, earned pride — a grandfather's mango
-tree, planted the year the narrator was born, bearing its first fruit a
-lifetime later.
+One quiet, earned moment of pride: a grandad plants a mango tree the year his grandchild is born, and decades of patient waiting finally land — this summer they pick its first fruit together, under its shade.
 
-## Run it
+> Grandad planted the mango tree the year I was born; this summer we picked its first fruit together, under its shade.
+
+The entry is a single line of 116 characters. It is a concrete scene with a real person, the pride earned inside the line by a long effort finally landing, and it lands in one read.
+
+## How to run
+
+Requires Python 3.13 (standard library only, no network at run time).
 
 ```sh
 python3 main.py
 ```
 
-This writes the single line to `/output/entry.txt` (or
-`$MAKEFUN_OUTPUT_DIR/entry.txt` / `--out <path>` when set). Python 3.13
-standard library only; no network at run time.
+This writes the entry to `entry.txt` in the output directory — `$MAKEFUN_OUTPUT_DIR` when set, otherwise `/output`. Pass a different directory with `--out`, or print the entry after writing it with `--print`:
 
-## License
+```sh
+python3 main.py --out ./output --print
+```
 
-MIT — see `LICENSE`.
+Before writing, the program asserts the entry is non-empty, exactly one line, and 1–200 characters long; after writing, it reads the file back and asserts the content equals the entry exactly.
