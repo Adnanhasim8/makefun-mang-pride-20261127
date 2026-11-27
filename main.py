@@ -1,55 +1,50 @@
-#!/usr/bin/env python3
-"""One Line of Earned Pride — u-mang-one-line-of-earned-pride-a0138557.
+"""One Line of Earned Pride — entry writer.
 
-Writes a single line (1-200 characters) of earned pride to /output/entry.txt.
-Python 3.13 standard library only, no network at run time.
-
-The line: a grandfather's mango tree, planted the year the narrator was born,
-bears its first fruit a lifetime later — the harvest is the pride, earned
-inside the line and never explained.
+Writes a single line of earned pride to entry.txt.
+Python 3.13 standard library only; no network at run time.
 """
 
 import argparse
 import os
-import sys
+from pathlib import Path
 
-ENTRY = (
-    "Grandad planted the mango tree the year I was born; "
-    "this summer we picked its first fruit together, under its shade."
-)
-
-# Gate: the entry must be exactly one line of 1-200 characters, non-empty.
-assert ENTRY and not ENTRY.isspace(), "entry must be non-empty"
-assert "\n" not in ENTRY and "\r" not in ENTRY, "entry must be exactly one line"
-assert 1 <= len(ENTRY) <= 200, f"entry must be 1-200 chars, got {len(ENTRY)}"
+ENTRY = "Grandad planted the mango tree the year I was born; this summer we picked its first fruit together, under its shade."
 
 
-def main(argv=None):
-    parser = argparse.ArgumentParser(description="Write one line of earned pride.")
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Write the One Line of Earned Pride entry to entry.txt."
+    )
     parser.add_argument(
         "--out",
         default=None,
-        help="Output file (default: $MAKEFUN_OUTPUT_DIR/entry.txt or /output/entry.txt)",
+        help="Output directory (default: $MAKEFUN_OUTPUT_DIR or /output).",
     )
-    args = parser.parse_args(argv)
+    parser.add_argument(
+        "--print",
+        action="store_true",
+        help="Print the entry to stdout after writing it.",
+    )
+    args = parser.parse_args()
 
-    if args.out:
-        out_path = args.out
-    else:
-        out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR", "/output")
-        out_path = os.path.join(out_dir, "entry.txt")
+    # Gate assertions: the entry must be one non-empty line of 1-200 chars.
+    assert ENTRY, "entry must not be empty"
+    assert ENTRY.strip(), "entry must not be only whitespace"
+    assert "\n" not in ENTRY and "\r" not in ENTRY, "entry must be exactly one line"
+    assert 1 <= len(ENTRY) <= 200, f"entry must be 1-200 chars, got {len(ENTRY)}"
 
-    os.makedirs(os.path.dirname(out_path) or ".", exist_ok=True)
-    with open(out_path, "w", encoding="utf-8", newline="") as f:
-        f.write(ENTRY)
+    out_dir = args.out or os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
+    out_path = Path(out_dir) / "entry.txt"
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(ENTRY, encoding="utf-8")
 
-    # Gate check on what was actually written.
-    with open(out_path, encoding="utf-8") as f:
-        written = f.read()
-    assert written == ENTRY, "written output differs from ENTRY"
-    assert 1 <= len(written) <= 200, "written output must be 1-200 chars"
-    return 0
+    # Verify after write: what landed on disk must equal ENTRY exactly.
+    written = out_path.read_text(encoding="utf-8")
+    assert written == ENTRY, "written entry.txt does not match ENTRY"
+
+    if args.print:
+        print(ENTRY)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
